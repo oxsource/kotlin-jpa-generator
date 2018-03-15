@@ -167,7 +167,7 @@ class KotlinPlugin(object):
             if len(class_explain) > 0:
                 content_lines.append('/**%s*/' % class_explain)
             content_lines.append('@Entity')
-            content_lines.append('@Table(name="%s")' % table_name)
+            content_lines.append('@Table(name="`%s`")' % table_name)
             content_lines.append('data class %s(' % class_name)
             '''解析字段'''
             fields = table.get('fields', {})
@@ -181,7 +181,9 @@ class KotlinPlugin(object):
                 if 'PRIMARY' in keys:
                     content_lines.append('\t@Id')
                 unique = ' unique=true,' if 'UNIQUE' in keys else ''
-                column = '\t@Column(name="%s",%s columnDefinition = "%s")' % (key, unique, define)
+                '''防止与数据库关键字冲突'''
+                safe_filed_name = '`%s`' % key
+                column = '\t@Column(name="%s",%s columnDefinition = "%s")' % (safe_filed_name, unique, define)
                 content_lines.append(column)
                 content_lines.append('\t%s,' % KotlinPlugin.kotlin_filed(field_name, d_type, value))
             if ',' in content_lines[-1]:
