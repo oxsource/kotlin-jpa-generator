@@ -1,0 +1,8 @@
+{
+  "host": "localhost",
+  "name": "db_name",
+  "user": "root",
+  "password": "root",
+  "path": "/system_path//project_path/src/main/kotlin",
+  "package": "com.xxx.spring.database.modell"
+}
