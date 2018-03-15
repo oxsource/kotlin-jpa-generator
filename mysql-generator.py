@@ -171,6 +171,7 @@ class KotlinPlugin(object):
             content_lines.append('data class %s(' % class_name)
             '''解析字段'''
             fields = table.get('fields', {})
+            params_null = []
             for key in fields:
                 kv = fields[key]
                 define = kv.get('define', '')
@@ -179,17 +180,19 @@ class KotlinPlugin(object):
                 value = kv.get('value', None)
                 field_name = KotlinPlugin.hump_format(key, capital=False)
                 if 'PRIMARY' in keys:
-                    content_lines.append('\t@Id')
-                    content_lines.append('\t@GeneratedValue')
+                    content_lines.append('\t\t@Id')
+                    content_lines.append('\t\t@GeneratedValue')
                 unique = ' unique=true,' if 'UNIQUE' in keys else ''
                 '''防止与数据库关键字冲突'''
                 safe_filed_name = '`%s`' % key
-                column = '\t@Column(name="%s",%s columnDefinition = "%s")' % (safe_filed_name, unique, define)
+                column = '\t\t@Column(name="%s",%s columnDefinition = "%s")' % (safe_filed_name, unique, define)
                 content_lines.append(column)
-                content_lines.append('\t%s,' % KotlinPlugin.kotlin_filed(field_name, d_type, value))
+                content_lines.append('\t\t%s,' % KotlinPlugin.kotlin_filed(field_name, d_type, value))
+                params_null.append('null')
             if ',' in content_lines[-1]:
-                content_lines[-1] = content_lines[-1].replace(',', '')
-            content_lines.append(')')
+                content_lines[-1] = content_lines[-1].replace(',', '){')
+            content_lines.append('\tconstructor() : this(%s)' % ', '.join(params_null))
+            content_lines.append('}')
             '''换行连接content'''
             class_body = '\n'.join(content_lines)
             if 'Date' in class_body:
