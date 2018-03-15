@@ -180,6 +180,7 @@ class KotlinPlugin(object):
                 field_name = KotlinPlugin.hump_format(key, capital=False)
                 if 'PRIMARY' in keys:
                     content_lines.append('\t@Id')
+                    content_lines.append('\t@GeneratedValue')
                 unique = ' unique=true,' if 'UNIQUE' in keys else ''
                 '''防止与数据库关键字冲突'''
                 safe_filed_name = '`%s`' % key
