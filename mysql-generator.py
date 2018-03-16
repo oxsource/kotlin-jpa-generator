@@ -218,14 +218,11 @@ class KotlinPlugin(object):
                 content_lines.append(column)
                 content_lines.append('\t\t%s,' % KotlinPlugin.kotlin_filed(field_name, d_type, value))
             if ',' in content_lines[-1]:
-                content_lines[-1] = content_lines[-1].replace(',', ')')
-            '''是否配置了无参插件[kotlin:no-arg]'''
-            kotlin_no_arg = params.get('kotlin:no-arg', False)
-            if not kotlin_no_arg:
-                content_lines[-1] += '{'
-                params_null = ['null'] * len(fields)
-                content_lines.append('\tconstructor() : this(%s)' % ', '.join(params_null))
-                content_lines.append('}')
+                content_lines[-1] = content_lines[-1].replace(',', '){')
+            '''构建无参构造函数'''
+            params_null = ['null'] * len(fields)
+            content_lines.append('\tconstructor() : this(%s)' % ', '.join(params_null))
+            content_lines.append('}')
             '''换行连接content'''
             class_body = '\n'.join(content_lines)
             head_lines = [package_line, 'import javax.persistence.*']
