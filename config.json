@@ -1,8 +1,10 @@
 {
-  "host": "localhost",
-  "name": "db_name",
-  "user": "root",
-  "password": "root",
-  "path": "/system_path//project_path/src/main/kotlin",
-  "package": "com.xxx.spring.database.modell"
+  "db:host": "localhost",
+  "db:name": "db",
+  "db:user": "db_dev",
+  "db:password": "root",
+  "src:path": "/Users/xxx/Desktop/project/src/main/kotlin",
+  "src:package": "com.xxx.spring.database.model",
+  "jpa:generation-type": "auto",
+  "kotlin:no-arg":true
 }
