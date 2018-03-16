@@ -244,7 +244,7 @@ class KotlinPlugin(object):
 if __name__ == '__main__':
     file = None
     try:
-        file = open('config.json')
+        file = open('local.config.json')
         config = json.load(file)
         host, name = config['db:host'], config['db:name']
         user, password = config['db:user'], config['db:password']
