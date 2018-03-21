@@ -178,6 +178,7 @@ class KotlinPlugin(object):
         global class_name, content_lines
         package = params.get('src:package', '')
         path = params.get('src:path', '')
+        target_tables = params.get('db.tables', [])
         package_line = 'package %s\n' % package
         '''文件路径'''
         layers = package.split('.')
@@ -188,6 +189,9 @@ class KotlinPlugin(object):
             content_lines = []
             '''解析表'''
             table_name = table.get('name', '')
+            if len(target_tables) > 0 and (table_name not in target_tables):
+                '''目标表不为空，且当前表不在目标表中则不处理'''
+                continue
             class_name = KotlinPlugin.hump_format(table_name)
             class_explain = table.get('comment', '')
             if len(class_explain) > 0:
