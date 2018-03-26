@@ -19,11 +19,13 @@ class MysqlParser(object):
     }
 
     @staticmethod
-    def fetch(url, db, account, identify=''):
+    def fetch(url, db, tables, account, identify=''):
         localhost = 'localhost'
-        shell = 'mysqldump -i %s -u%s -p%s --opt -d %s' % (url, account, identify, db)
+        table_str = ' '.join(tables)
+        shell = 'mysqldump -h %s -u%s -p%s --opt -d %s %s' % (url, account, identify, db, table_str)
+        shell = shell.strip()
         if localhost in shell:
-            shell = shell.replace(' -i %s' % localhost, '')
+            shell = shell.replace(' -h %s' % localhost, '')
         print('shell=%s' % shell)
         return os.popen(shell).read()
 
@@ -135,7 +137,7 @@ class KotlinPlugin(object):
                 field = 'var %s: Byte? = %s' % (field_name, value)
         elif 'short' == field_type:
             if value is None:
-                field = 'var %s: Short,' % field_name
+                field = 'var %s: Short?,' % field_name
             else:
                 field = 'var %s: Short? = %s' % (field_name, value)
         elif 'int' == field_type:
@@ -145,7 +147,7 @@ class KotlinPlugin(object):
                 field = 'var %s: Int? = %s' % (field_name, value)
         elif 'long' == field_type:
             if value is None:
-                field = 'var %s: Long,' % field_name
+                field = 'var %s: Long?' % field_name
             else:
                 field = 'var %s: Long? = %sl' % (field_name, value)
         elif 'string' == field_type:
@@ -249,7 +251,8 @@ if __name__ == '__main__':
         config = json.load(file)
         host, name = config['db:host'], config['db:name']
         user, password = config['db:user'], config['db:password']
-        content = MysqlParser.fetch(host, name, user, password)
+        table = config['db.tables']
+        content = MysqlParser.fetch(host, name, table, user, password)
         with open('restaurant.sql', 'w') as f:
             f.write(content)
         parser = MysqlParser()
