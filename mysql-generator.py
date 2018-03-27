@@ -182,6 +182,7 @@ class KotlinPlugin(object):
         path = params.get('src:path', '')
         target_tables = params.get('db.tables', [])
         package_line = 'package %s\n' % package
+        import_lines = [package_line, 'import javax.persistence.*']
         '''文件路径'''
         layers = package.split('.')
         for layer in layers:
@@ -200,6 +201,12 @@ class KotlinPlugin(object):
                 content_lines.append('/**%s*/' % class_explain)
             content_lines.append('@Entity')
             content_lines.append('@Table(name = "`%s`")' % table_name)
+            if True == params.get('db.dynamic.insert', False):
+                content_lines.append('@DynamicInsert')
+                import_lines.append('import org.hibernate.annotations.DynamicInsert')
+            if True == params.get('db.dynamic.update', False):
+                content_lines.append('@DynamicUpdate')
+                import_lines.append('import org.hibernate.annotations.DynamicUpdate')
             content_lines.append('data class %s(' % class_name)
             '''解析字段'''
             fields = table.get('fields', {})
@@ -231,11 +238,10 @@ class KotlinPlugin(object):
             content_lines.append('}')
             '''换行连接content'''
             class_body = '\n'.join(content_lines)
-            head_lines = [package_line, 'import javax.persistence.*']
             if 'Date' in class_body:
-                head_lines.append('import java.util.*')
-            head_lines.append('\n')
-            class_head = '\n'.join(head_lines)
+                import_lines.append('import java.util.*')
+            import_lines.append('\n')
+            class_head = '\n'.join(import_lines)
             whole_class = '\n'.join([class_head, class_body])
             '''文件写入'''
             file_path = os.path.join(path, '%s.kt' % class_name)
