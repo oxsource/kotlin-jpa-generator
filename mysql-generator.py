@@ -137,7 +137,7 @@ class KotlinPlugin(object):
                 field = 'var %s: Byte? = %s' % (field_name, value)
         elif 'short' == field_type:
             if value is None:
-                field = 'var %s: Short?,' % field_name
+                field = 'var %s: Short?' % field_name
             else:
                 field = 'var %s: Short? = %s' % (field_name, value)
         elif 'int' == field_type:
@@ -182,7 +182,6 @@ class KotlinPlugin(object):
         path = params.get('src:path', '')
         target_tables = params.get('db.tables', [])
         package_line = 'package %s\n' % package
-        import_lines = [package_line, 'import javax.persistence.*']
         '''文件路径'''
         layers = package.split('.')
         for layer in layers:
@@ -190,6 +189,7 @@ class KotlinPlugin(object):
         '''遍历数据库表'''
         for table in tables:
             content_lines = []
+            import_lines = [package_line, 'import javax.persistence.*']
             '''解析表'''
             table_name = table.get('name', '')
             if len(target_tables) > 0 and (table_name not in target_tables):
