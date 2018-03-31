@@ -50,7 +50,7 @@ class MysqlParser(object):
             if 0 == len(groups):
                 continue
             group = groups[0]
-            dirty_rows = group[1].split(',')
+            dirty_rows = group[1].split(',\n')
             rows = list(map(lambda x: x.replace('\n', '').strip(), dirty_rows))
             fields = self.__fields(rows)
             table = {'name': group[0], 'fields': fields, 'comment': group[2]}
